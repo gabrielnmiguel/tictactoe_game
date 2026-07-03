@@ -7,7 +7,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     let board = ['', '', '', '', '', '', '', '', ''];
 
-    let currentPlayer = 'X';
+    let currentPlayer = 'O';
     let isGameActive = true;
 
     const PLAYERX_WON = 'PLAYERX_WON';
@@ -37,18 +37,57 @@ window.addEventListener('DOMContentLoaded', () => {
 
     ]
 
-
+ 
     function handleResultValidation() {
         let roundWon = false;
 
+        const announce = (type) => {
+            switch(type) {
+                case PLAYERO_WON:
+                    announcer.innerHTML = 'Player <span class="playerO">O</span> Won';
+                    break;
+
+                case PLAYERX_WON:
+                    announcer.innerHTML = 'player <span class="playerX">X</span> Won';
+                    break;
+
+                case TIE:
+                    announcer.innerText = 'Tie';
+
+            }
+            announcer.classList.remove('hide');
+
+        };
+
         for (let i= 0; i <= 7; i++) {
             const winCondition = winningConditions[i];
-            const
+            const a = board[winCondition[0]];
+            const b = board[winCondition[1]];
+            const c = board[winCondition[2]];
+            if (a === '' || b === '' || c === ''){
+                continue;
+            }
+            if (a === b && b === c){
+                roundWon = true;
+                break;
 
+            }
 
         }
 
-    }
+        if (roundWon) {
+            announce(currentPlayer === 'X' ? PLAYERX_WON : PLAYERO_WON);
+            isGameActive = false;
+            return;
+        }
+
+        if (!board.includes('')){
+            announce(TIE);
+
+        }
+
+
+    };
 
     
     const updateBoard = (index) => {
@@ -62,7 +101,7 @@ window.addEventListener('DOMContentLoaded', () => {
         displayPlayer.innerHTML = currentPlayer;
         displayPlayer.classList.add(`player${currentPlayer}`);
         
-    }
+    };
     
     const isValidAction = (tile) => {
         if(tile.innerHTML === 'X' || tile.innerHTML === 'O'){
@@ -77,7 +116,7 @@ window.addEventListener('DOMContentLoaded', () => {
             tile.innerText = currentPlayer;
             tile.classList.add(`player${currentPlayer}`);
             updateBoard(index);
-
+            handleResultValidation();
             changePlayer();
 
         }
